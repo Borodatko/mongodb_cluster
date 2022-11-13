@@ -1,0 +1,14 @@
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongoRouter.log
+
+net:
+  port: 27017
+  bindIp: {{ ip07 }}
+
+security:
+  keyFile: /var/lib/mongo/mongo-keyfile
+
+sharding:
+  configDB: configReplSet/{{ ip01 }}:27019,{{ ip02 }}:27019,{{ ip03 }}:27019

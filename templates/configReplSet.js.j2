@@ -1,0 +1,11 @@
+rs.initiate(
+    {
+        _id: "configReplSet",
+        configsvr: true,
+        members: [
+            { _id : 0, host : "{{ ip01 }}:27019" },
+            { _id : 1, host : "{{ ip02 }}:27019" },
+            { _id : 2, host : "{{ ip03 }}:27019" }
+        ]
+    }
+)

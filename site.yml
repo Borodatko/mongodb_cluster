@@ -1,0 +1,283 @@
+---
+
+- name: Preparing hosts
+  hosts: all
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - preinstall
+  tasks:
+
+  - name: Edit /etc/profile
+    ansible.builtin.blockinfile:
+      path: /etc/profile
+      block: |
+        export HISTSIZE=10000
+        export HISTTIMEFORMAT="%h %d %H:%M:%S "
+        PROMPT_COMMAND='history -a'
+        export HISTIGNORE="ls:ll:history:w:htop:pwd"
+
+  - name: Add Mongo Repo
+    ansible.builtin.template:
+      src: mongodb.repo.j2
+      dest: /etc/yum.repos.d/mongodb.repo
+
+  - name: Upgrade all packages
+    ansible.builtin.yum:
+      name: '*'
+      state: latest
+
+  - name: Install Packages
+    ansible.builtin.yum:
+      name:
+        - nano
+        - sysstat
+        - mlocate
+        - net-tools
+        - bind-utils
+        - tcpdump
+        - curl
+        - wget
+        - mongodb-org
+      state: latest
+
+
+  - name: Rename Hosts
+    become: true
+    ansible.builtin.hostname:
+      name: "{{ inventory_hostname }}"
+
+  - name: Copy hosts file
+    ansible.builtin.template:
+      src: hosts.j2
+      dest: /etc/hosts
+
+  - name: Install pymongo lib
+    ansible.builtin.pip:
+      name: pymongo
+      executable: pip3
+      state: present
+
+
+- name: Configure primary replica
+  hosts: primary_replica
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - primary_replica
+  tasks:
+
+  - name: Start mongod
+    become: true
+    ansible.builtin.systemd:
+      name: mongod
+      enabled: yes
+      masked: no
+      state: started
+
+  - name: Create admin user
+    community.mongodb.mongodb_user:
+      database: "{{ mongo_database }}"
+      name: "{{ mongodb_user }}"
+      password: "{{ mongodb_pass }}"
+      state: present
+      roles: "{{ mongodb_role }}"
+
+  - name: Generate private key
+    become: true
+    community.crypto.openssl_privatekey:
+      path: /var/lib/mongo/mongo-keyfile
+      mode: '0400'
+      owner: mongod
+      group: mongod
+
+  - name: Mongo - Get key
+    become: true
+    ansible.builtin.fetch:
+      src: /var/lib/mongo/mongo-keyfile
+      dest: /tmp/mongo-keyfile
+      flat: yes
+
+
+- name: SSL Key
+  hosts: all
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - ssl
+  tasks:
+
+  - name: Copy key
+    become: true
+    ansible.builtin.copy:
+      src: /tmp/mongo-keyfile
+      dest: /var/lib/mongo/mongo-keyfile
+      owner: mongod
+      group: mongod
+      mode: '0400'
+
+
+- name: Configure replicas hosts
+  hosts: replicas
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - replicas_hosts
+  tasks:
+
+  - name: Copy mongodb config
+    ansible.builtin.template:
+      src: mongodConfig.conf.j2
+      dest: /etc/mongod.conf
+
+  - name: Restart mongod
+    ansible.builtin.systemd:
+      name: mongod
+      enabled: yes
+      masked: no
+      state: restarted
+
+- name: Configure replication
+  hosts: primary_replica
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - replication
+  tasks:
+
+  - name: Copy js script
+    ansible.builtin.template:
+      src: configReplSet.js.j2
+      dest: /etc/configReplSet.js
+
+  - name: Create replica configReplSet
+    community.mongodb.mongodb_shell:
+      login_host: "{{ ip01 }}"
+      login_port: 27019
+      login_user: "{{ mongodb_user }}"
+      login_password: "{{ mongodb_pass }}"
+      login_database: "{{ mongodb_role }}"
+      file: /etc/configReplSet.js
+      idempotent: yes
+
+
+- name: Configure primary shard
+  hosts: primary_shard
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - primary_shard
+  tasks:
+
+  - name: Start mongod
+    ansible.builtin.systemd:
+      name: mongod
+      enabled: yes
+      masked: no
+      state: started
+
+  - name: Create admin user
+    community.mongodb.mongodb_user:
+      database: "{{ mongo_database }}"
+      name: "{{ mongodb_user }}"
+      password: "{{ mongodb_pass }}"
+      state: present
+      roles: "{{ mongodb_role }}"
+ 
+
+- name: Configure shards hosts
+  hosts: shards
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - shards_hosts
+  tasks:
+
+  - name: Mongo - Copy mongodb config
+    ansible.builtin.template:
+      src: mongodShard.conf.j2
+      dest: /etc/mongod.conf
+
+  - name: Restart mongod
+    ansible.builtin.systemd:
+      name: mongod
+      enabled: yes
+      masked: no
+      state: restarted
+
+
+- name: Configure shards
+  hosts: primary_shard
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - shards
+  tasks:
+
+  - name: Copy js script
+    ansible.builtin.template:
+      src: rs0.js.j2
+      dest: /etc/rs0.js
+
+  - name: Create replica rs0
+    community.mongodb.mongodb_shell:
+      login_host: "{{ ip04 }}"
+      login_port: 27018
+      login_user: "{{ mongodb_user }}"
+      login_password: "{{ mongodb_pass }}"
+      login_database: "{{ mongo_database }""
+      file: "/etc/rs0.js"
+      idempotent: yes
+
+
+- name: Router configuration
+  hosts: router
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3.6
+  tags:
+    - router
+  tasks:
+
+  - name: Stop mongod
+    become: true
+    ansible.builtin.systemd:
+      name: mongod
+      enabled: no
+      masked: yes
+      state: stopped
+
+  - name: Copy mongodb config
+    ansible.builtin.template:
+      src: mongoRouter.conf.j2
+      dest: /etc/mongos.conf
+
+  - name: Copy systemd unit
+    become: true
+    ansible.builtin.templte:
+      src: mongos.service.j2
+      dest: /etc/systemd/system/mongos.service
+
+  - name: Start mongos
+    become: true
+    ansible.builtin.systemd:
+      daemon_reload: yes
+      name: mongos
+      enabled: yes
+      masked: no
+      state: started
+
+  - name: Copy js script
+    ansible.builtin.template:
+      src: addShard.js.j2
+      dest: /etc/addShard.js
+
+  - name: Add shards
+    community.mongodb.mongodb_shell:
+      login_host: "{{ ip07 }}"
+      login_port: 27017
+      login_user: "{{ mongodb_user }}"
+      login_password: "{{ mongodb_pass }}"
+      login_database: "{{ mongo_database }}"
+      file: "/etc/addShard.js"
+      idempotent: yes
+
