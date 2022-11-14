@@ -8,26 +8,39 @@
     - preinstall
   tasks:
 
+  - name: Stop Firewalld
+    become: true
+    ansible.builtin.systemd:
+      name: firewalld
+      enabled : no
+      masked: yes
+      state: stopped
+
   - name: Edit /etc/profile
+    become: true
     ansible.builtin.blockinfile:
       path: /etc/profile
       block: |
+        shopt -s histappend
         export HISTSIZE=10000
         export HISTTIMEFORMAT="%h %d %H:%M:%S "
         PROMPT_COMMAND='history -a'
         export HISTIGNORE="ls:ll:history:w:htop:pwd"
 
   - name: Add Mongo Repo
+    become: true
     ansible.builtin.template:
       src: mongodb.repo.j2
       dest: /etc/yum.repos.d/mongodb.repo
 
   - name: Upgrade all packages
+    become: true
     ansible.builtin.yum:
       name: '*'
       state: latest
 
   - name: Install Packages
+    become: true
     ansible.builtin.yum:
       name:
         - nano
@@ -41,20 +54,32 @@
         - mongodb-org
       state: latest
 
-
   - name: Rename Hosts
     become: true
     ansible.builtin.hostname:
       name: "{{ inventory_hostname }}"
 
   - name: Copy hosts file
+    become: true
     ansible.builtin.template:
       src: hosts.j2
       dest: /etc/hosts
 
-  - name: Install pymongo lib
+  - name: Upgrade pip
+    become: true
     ansible.builtin.pip:
-      name: pymongo
+      name: pip
+      extra_args: --upgrade
+      executable: pip3
+      state: latest
+
+  - name: Install libs
+    become: true
+    ansible.builtin.pip:
+      name:
+        - cryptography>=1.2.3
+        - pymongo
+        - selinux
       executable: pip3
       state: present
 
@@ -85,11 +110,21 @@
 
   - name: Generate private key
     become: true
-    community.crypto.openssl_privatekey:
+    shell: 'openssl rand -base64 756 > /var/lib/mongo/mongo-keyfile'
+
+  - name: Set permissions
+    become: true
+    ansible.builtin.file:
       path: /var/lib/mongo/mongo-keyfile
       mode: '0400'
       owner: mongod
       group: mongod
+
+#    community.crypto.openssl_privatekey:
+#      path: /var/lib/mongo/mongo-keyfile
+#      mode: '0400'
+#      owner: mongod
+#      group: mongod
 
   - name: Mongo - Get key
     become: true
@@ -118,6 +153,7 @@
 
 
 - name: Configure replicas hosts
+  become: true
   hosts: replicas
   vars:
     - ansible_python_interpreter: /usr/bin/python3.6
@@ -137,6 +173,7 @@
       masked: no
       state: restarted
 
+
 - name: Configure replication
   hosts: primary_replica
   vars:
@@ -146,6 +183,7 @@
   tasks:
 
   - name: Copy js script
+    become: true
     ansible.builtin.template:
       src: configReplSet.js.j2
       dest: /etc/configReplSet.js
@@ -156,7 +194,7 @@
       login_port: 27019
       login_user: "{{ mongodb_user }}"
       login_password: "{{ mongodb_pass }}"
-      login_database: "{{ mongodb_role }}"
+      login_database: "{{ mongo_database }}"
       file: /etc/configReplSet.js
       idempotent: yes
 
@@ -170,6 +208,7 @@
   tasks:
 
   - name: Start mongod
+    become: true
     ansible.builtin.systemd:
       name: mongod
       enabled: yes
@@ -186,6 +225,7 @@
  
 
 - name: Configure shards hosts
+  become: true
   hosts: shards
   vars:
     - ansible_python_interpreter: /usr/bin/python3.6
@@ -215,6 +255,7 @@
   tasks:
 
   - name: Copy js script
+    become: true
     ansible.builtin.template:
       src: rs0.js.j2
       dest: /etc/rs0.js
@@ -225,7 +266,7 @@
       login_port: 27018
       login_user: "{{ mongodb_user }}"
       login_password: "{{ mongodb_pass }}"
-      login_database: "{{ mongo_database }""
+      login_database: "{{ mongo_database }}"
       file: "/etc/rs0.js"
       idempotent: yes
 
@@ -247,13 +288,14 @@
       state: stopped
 
   - name: Copy mongodb config
+    become: true
     ansible.builtin.template:
       src: mongoRouter.conf.j2
       dest: /etc/mongos.conf
 
   - name: Copy systemd unit
     become: true
-    ansible.builtin.templte:
+    ansible.builtin.template:
       src: mongos.service.j2
       dest: /etc/systemd/system/mongos.service
 
@@ -267,6 +309,7 @@
       state: started
 
   - name: Copy js script
+    become: true
     ansible.builtin.template:
       src: addShard.js.j2
       dest: /etc/addShard.js
@@ -280,4 +323,3 @@
       login_database: "{{ mongo_database }}"
       file: "/etc/addShard.js"
       idempotent: yes
-
