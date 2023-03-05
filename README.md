@@ -36,15 +36,94 @@ Tags
 
 Supported tags in tasks:
 
- - pretasks
- - primary_replica
- - ssl
- - replicas
- - replication
- - primary_shard
- - shards_hosts
- - shards
- - router
+ - **pretasks**
+ - **primary_replica**
+ - **ssl**
+ - **replicas**
+ - **replication**
+ - **primary_shard**
+ - **shards_hosts**
+ - **shards**
+ - **router**
+
+
+Example of inventory file
+-------------------------
+
+```yaml
+---
+all:
+  hosts:
+    mongo01:
+      ansible_host: CHANGEME
+    mongo02:
+      ansible_host: CHANGEME
+    mongo03:
+      ansible_host: CHANGEME
+    mongo04:
+      ansible_host: CHANGEME
+    mongo05:
+      ansible_host: CHANGEME
+    mongo06:
+      ansible_host: CHANGEME
+    mongo07:
+      ansible_host: CHANGEME
+primary_replica:
+  hosts:
+    mongo01:
+      ansible_host: CHANGEME
+replias:
+  hosts:
+    mongo01:
+      ansible_host: CHANGEME
+    mongo02:
+      ansible_host: CHANGEME
+    mongo03:
+      ansible_host: CHANGEME
+primary_shard:
+  hosts:
+    mongo04:
+      ansible_host: CHANGEME
+shards:
+  hosts:
+    mongo04:
+      ansible_host: CHANGEME
+    mongo05:
+      ansible_host: CHANGEME
+    mongo06:
+      ansible_host: CHANGEME
+router:
+  hosts:
+    mongo07:
+      ansible_host: CHANGEME
+
+cluster:
+  children:
+    all:
+    primary_replica:
+    replias:
+    primary_shard:
+    shards:
+    router:
+  vars:
+    ansible_user: CHANGEME
+    ansible_python_interpreter: /usr/bin/python3.6
+...
+```
+
+
+Example Playbook
+----------------
+
+An example of using role:
+
+```yaml
+- name: MongoDB Provisioning
+  hosts:
+    all,primary_replica,replias,primary_shard,shards,router
+  roles:
+    - mongodb-cluster
+```
 
 
 License

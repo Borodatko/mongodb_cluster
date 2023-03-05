@@ -8,37 +8,55 @@
 
 - name: Pretasks
   ansible.builtin.include_tasks: pretasks.yml
+  when:
+    hosts == all
   tags: [always]
 
 - name: Configure Primary Replica
   ansible.builtin.include_tasks: primary_replica.yml
+  when:
+    hosts == primary_replica
   tags: [always]
 
 - name: SSL Key
   ansible.builtin.include_tasks: ssl.yml
+  when:
+    hosts == all
   tags: [always]
 
 - name: Configure Replicas Hosts
   ansible.builtin.include_tasks: replicas_hosts.yml
+  when:
+    hosts == replicas
   tags: [always]
 
 - name: Configure Replication
   ansible.builtin.include_tasks: config_repl_set.yml
+  when:
+    hosts == primary_replica
   tags: [always]
 
 - name: Configure Primary Shard
   ansible.builtin.include_tasks: primary_shard.yml
+  when:
+    hosts == primary_shard
   tags: [always]
 
 - name: Configure Shards Hosts
   ansible.builtin.include_tasks: shards_hosts.yml
+  when:
+    hosts == shards
   tags: [always]
 
 - name: Configure Shards
   ansible.builtin.include_tasks: config_shards.yml
+  when:
+    hosts == primary_shard
   tags: [always]
 
 - name: Router Configuration
   ansible.builtin.include_tasks: router.yml
+  when:
+    hosts == router
   tags: [always]
 ...
