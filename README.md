@@ -119,8 +119,7 @@ An example of using role:
 
 ```yaml
 - name: MongoDB Provisioning
-  hosts:
-    all,primary_replica,replias,primary_shard,shards,router
+  hosts: all,primary_replica,replias,primary_shard,shards,router
   roles:
     - mongodb-cluster
 ```
