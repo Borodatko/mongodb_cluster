@@ -1,5 +1,6 @@
 ---
 - name: Copy mongodb config
+  become: true
   ansible.builtin.template:
     src: mongodConfig.conf.j2
     dest: /etc/mongod.conf

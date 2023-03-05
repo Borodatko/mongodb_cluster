@@ -99,7 +99,6 @@ router:
 
 cluster:
   children:
-    all:
     primary_replica:
     replias:
     primary_shard:
@@ -121,7 +120,7 @@ An example of using role:
 - name: MongoDB Provisioning
   hosts: all,primary_replica,replias,primary_shard,shards,router
   roles:
-    - mongodb-cluster
+    - mongodb_cluster
 ```
 
 

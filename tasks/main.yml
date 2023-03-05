@@ -8,55 +8,51 @@
 
 - name: Pretasks
   ansible.builtin.include_tasks: pretasks.yml
-  when:
-    hosts == all
   tags: [always]
 
 - name: Configure Primary Replica
   ansible.builtin.include_tasks: primary_replica.yml
   when:
-    hosts == primary_replica
+    inventory_hostname == "mongo01"
   tags: [always]
 
 - name: SSL Key
   ansible.builtin.include_tasks: ssl.yml
-  when:
-    hosts == all
   tags: [always]
 
 - name: Configure Replicas Hosts
   ansible.builtin.include_tasks: replicas_hosts.yml
   when:
-    hosts == replicas
+    inventory_hostname == "mongo01" or inventory_hostname == "mongo02" or inventory_hostname == "mongo03"
   tags: [always]
 
 - name: Configure Replication
   ansible.builtin.include_tasks: config_repl_set.yml
   when:
-    hosts == primary_replica
+    inventory_hostname == "mongo01"
   tags: [always]
 
 - name: Configure Primary Shard
   ansible.builtin.include_tasks: primary_shard.yml
   when:
-    hosts == primary_shard
+    inventory_hostname == "mongo04"
   tags: [always]
 
 - name: Configure Shards Hosts
   ansible.builtin.include_tasks: shards_hosts.yml
   when:
-    hosts == shards
+    inventory_hostname == "mongo04" or inventory_hostname == "mongo05" or inventory_hostname == "mongo06"
   tags: [always]
 
 - name: Configure Shards
   ansible.builtin.include_tasks: config_shards.yml
   when:
-    hosts == primary_shard
+    inventory_hostname == "mongo04"
   tags: [always]
 
 - name: Router Configuration
   ansible.builtin.include_tasks: router.yml
   when:
-    hosts == router
+    inventory_hostname == "mongo07"
   tags: [always]
 ...

@@ -1,5 +1,6 @@
 ---
 - name: Restart mongod
+  become: true
   ansible.builtin.systemd:
     name: mongod
     enabled: true
