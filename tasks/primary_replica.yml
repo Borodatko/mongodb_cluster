@@ -1,0 +1,42 @@
+---
+- name: Start mongod
+  become: true
+  ansible.builtin.systemd:
+    name: mongod
+    enabled: true
+    masked: false
+    state: started
+
+- name: Create admin user
+  community.mongodb.mongodb_user:
+    database: "{{ mongo_database }}"
+    name: "{{ mongodb_user }}"
+    password: "{{ mongodb_pass }}"
+    state: present
+    roles: "{{ mongodb_role }}"
+
+- name: Generate private key
+  become: true
+  ansible.builtin.shell: 'openssl rand -base64 756 > /var/lib/mongo/mongo-keyfile'
+
+- name: Set permissions
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/mongo/mongo-keyfile
+    mode: '0400'
+    owner: mongod
+    group: mongod
+
+#  community.crypto.openssl_privatekey:
+#    path: /var/lib/mongo/mongo-keyfile
+#    mode: '0400'
+#    owner: mongod
+#    group: mongod
+
+- name: Mongo - Get key
+  become: true
+  ansible.builtin.fetch:
+    src: /var/lib/mongo/mongo-keyfile
+    dest: /tmp/mongo-keyfile
+    flat: true
+...

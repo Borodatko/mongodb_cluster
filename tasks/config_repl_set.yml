@@ -1,0 +1,17 @@
+---
+- name: Copy js script
+  become: true
+  ansible.builtin.template:
+    src: configReplSet.js.j2
+    dest: /etc/configReplSet.js
+
+- name: Create replica configReplSet
+  community.mongodb.mongodb_shell:
+    login_host: "{{ ip01 }}"
+    login_port: 27019
+    login_user: "{{ mongodb_user }}"
+    login_password: "{{ mongodb_pass }}"
+    login_database: "{{ mongo_database }}"
+    file: /etc/configReplSet.js
+    idempotent: yes
+...

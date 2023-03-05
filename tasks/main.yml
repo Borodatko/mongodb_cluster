@@ -1,0 +1,44 @@
+---
+- name: Check OS
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] == "RedHat"
+      - ansible_facts['distribution_major_version'] == "7"
+    fail_msg: Host {{ ansible_hostname }} does not meet minimal reqs
+
+- name: Pretasks
+  ansible.builtin.include_tasks: pretasks.yml
+  tags: [always]
+
+- name: Configure Primary Replica
+  ansible.builtin.include_tasks: primary_replica.yml
+  tags: [always]
+
+- name: SSL Key
+  ansible.builtin.include_tasks: ssl.yml
+  tags: [always]
+
+- name: Configure Replicas Hosts
+  ansible.builtin.include_tasks: replicas_hosts.yml
+  tags: [always]
+
+- name: Configure Replication
+  ansible.builtin.include_tasks: config_repl_set.yml
+  tags: [always]
+
+- name: Configure Primary Shard
+  ansible.builtin.include_tasks: primaty_shard.yml
+  tags: [always]
+
+- name: Configure Shards Hosts
+  ansible.builtin.include_tasks: shards_hosts.yml
+  tags: [always]
+
+- name: Configure Shards
+  ansible.builtin.include_tasks: config_shards.yml
+  tags: [always]
+
+- name: Router Configuration
+  ansible.builtin.include_tasks: router.yml
+  tags: [always]
+...

@@ -1,0 +1,17 @@
+---
+- name: Copy js script
+  become: true
+  ansible.builtin.template:
+    src: rs0.js.j2
+    dest: /etc/rs0.js
+
+- name: Create replica rs0
+  community.mongodb.mongodb_shell:
+    login_host: "{{ ip04 }}"
+    login_port: 27018
+    login_user: "{{ mongodb_user }}"
+    login_password: "{{ mongodb_pass }}"
+    login_database: "{{ mongo_database }}"
+    file: "/etc/rs0.js"
+    idempotent: yes
+...

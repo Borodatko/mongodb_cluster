@@ -1,5 +1,4 @@
 ---
-
 mongo_version: "5.0"
 mongo_database: "CHANGEME"
 mongodb_user: "CHANGEME"
@@ -12,3 +11,4 @@ ip04: "CHANGEME"
 ip05: "CHANGEME"
 ip06: "CHANGEME"
 ip07: "CHANGEME"
+...

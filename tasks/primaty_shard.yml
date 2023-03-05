@@ -1,0 +1,17 @@
+---
+- name: Start mongod
+  become: true
+  ansible.builtin.systemd:
+    name: mongod
+    enabled: true
+    masked: false
+    state: started
+
+- name: Create admin user
+  community.mongodb.mongodb_user:
+    database: "{{ mongo_database }}"
+    name: "{{ mongodb_user }}"
+    password: "{{ mongodb_pass }}"
+    state: present
+    roles: "{{ mongodb_role }}"
+...

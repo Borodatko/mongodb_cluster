@@ -1,0 +1,13 @@
+---
+- name: Copy mongodb config
+  ansible.builtin.template:
+    src: mongodConfig.conf.j2
+    dest: /etc/mongod.conf
+
+- name: Restart mongod
+  ansible.builtin.systemd:
+    name: mongod
+    enabled: true
+    masked: false
+    state: restarted
+...

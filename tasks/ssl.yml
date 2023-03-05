@@ -1,0 +1,10 @@
+---
+- name: Copy key
+  become: true
+  ansible.builtin.copy:
+    src: /tmp/mongo-keyfile
+    dest: /var/lib/mongo/mongo-keyfile
+    owner: mongod
+    group: mongod
+    mode: '0400'
+...
