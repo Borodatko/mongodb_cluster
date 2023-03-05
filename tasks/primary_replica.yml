@@ -6,6 +6,8 @@
     enabled: true
     masked: false
     state: started
+  tags:
+    - primary_replica
 
 - name: Create admin user
   community.mongodb.mongodb_user:
@@ -14,10 +16,14 @@
     password: "{{ mongodb_pass }}"
     state: present
     roles: "{{ mongodb_role }}"
+  tags:
+    - primary_replica
 
 - name: Generate private key
   become: true
   ansible.builtin.shell: 'openssl rand -base64 756 > /var/lib/mongo/mongo-keyfile'
+  tags:
+    - primary_replica
 
 - name: Set permissions
   become: true
@@ -26,6 +32,8 @@
     mode: '0400'
     owner: mongod
     group: mongod
+  tags:
+    - primary_replica
 
 #  community.crypto.openssl_privatekey:
 #    path: /var/lib/mongo/mongo-keyfile
@@ -39,4 +47,6 @@
     src: /var/lib/mongo/mongo-keyfile
     dest: /tmp/mongo-keyfile
     flat: true
+  tags:
+    - primary_replica
 ...

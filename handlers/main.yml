@@ -1,5 +1,17 @@
 ---
+- name: Restart mongod
+  ansible.builtin.systemd:
+    name: mongod
+    enabled: true
+    masked: false
+    state: restarted
 
-
-
+- name: Start mongos
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: mongos
+    enabled: true
+    masked: false
+    state: started
 ...

@@ -6,6 +6,8 @@
     enabled: true
     masked: false
     state: started
+  tags:
+    - primary_shard
 
 - name: Create admin user
   community.mongodb.mongodb_user:
@@ -14,4 +16,6 @@
     password: "{{ mongodb_pass }}"
     state: present
     roles: "{{ mongodb_role }}"
+  tags:
+    - primary_shard
 ...

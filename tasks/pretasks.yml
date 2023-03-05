@@ -3,7 +3,7 @@
   become: true
   ansible.builtin.systemd:
     name: firewalld
-    enabled : false
+    enabled: false
     masked: true
     state: stopped
   tags:
@@ -27,6 +27,7 @@
   ansible.builtin.template:
     src: mongodb.repo.j2
     dest: /etc/yum.repos.d/mongodb.repo
+    mode: '0644'
   tags:
     - pretasks
 
@@ -51,7 +52,7 @@
       - curl
       - wget
       - mongodb-org
-    state: latest
+    state: present
   tags:
     - pretasks
 
@@ -67,6 +68,7 @@
   ansible.builtin.template:
     src: hosts.j2
     dest: /etc/hosts
+    mode: '0644'
   tags:
     - pretasks
 

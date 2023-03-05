@@ -4,6 +4,9 @@
   ansible.builtin.template:
     src: configReplSet.js.j2
     dest: /etc/configReplSet.js
+    mode: '0644'
+  tags:
+    - replication
 
 - name: Create replica configReplSet
   community.mongodb.mongodb_shell:
@@ -13,5 +16,7 @@
     login_password: "{{ mongodb_pass }}"
     login_database: "{{ mongo_database }}"
     file: /etc/configReplSet.js
-    idempotent: yes
+    idempotent: true
+  tags:
+    - replication
 ...

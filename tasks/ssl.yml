@@ -7,4 +7,6 @@
     owner: mongod
     group: mongod
     mode: '0400'
+  tags:
+    - ssl
 ...

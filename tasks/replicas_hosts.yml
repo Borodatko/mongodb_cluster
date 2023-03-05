@@ -3,11 +3,14 @@
   ansible.builtin.template:
     src: mongodConfig.conf.j2
     dest: /etc/mongod.conf
+    mode: '0644'
+  notify:
+    - Restart mongod
+  tags:
+    - replicas
 
-- name: Restart mongod
-  ansible.builtin.systemd:
-    name: mongod
-    enabled: true
-    masked: false
-    state: restarted
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+  tags:
+    - replicas
 ...

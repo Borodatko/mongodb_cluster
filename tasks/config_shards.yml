@@ -4,6 +4,9 @@
   ansible.builtin.template:
     src: rs0.js.j2
     dest: /etc/rs0.js
+    mode: '0644'
+  tags:
+    - shards
 
 - name: Create replica rs0
   community.mongodb.mongodb_shell:
@@ -13,5 +16,7 @@
     login_password: "{{ mongodb_pass }}"
     login_database: "{{ mongo_database }}"
     file: "/etc/rs0.js"
-    idempotent: yes
+    idempotent: true
+  tags:
+    - shards
 ...
