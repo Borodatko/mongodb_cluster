@@ -36,10 +36,6 @@
   tags:
     - pretasks
 
-- name: Disable SELinux
-  ansible.posix.selinux:
-    state: disabled
-
 - name: Edit /etc/profile
   become: true
   ansible.builtin.blockinfile:
