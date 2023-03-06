@@ -15,4 +15,8 @@
     enabled: true
     masked: false
     state: started
+
+- name: Setenforce
+  become: true
+  ansible.builtin.command: 'setenforce 0'
 ...

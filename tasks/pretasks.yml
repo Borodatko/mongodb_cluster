@@ -1,4 +1,31 @@
 ---
+- name: Check SELinux status
+  become: true
+  ansible.builtin.lineinfile:
+    dest: "/etc/selinux/config"
+    line: "SELINUX=enforcing"
+  check_mode: true
+  register: sestate
+  tags:
+    - pretasks
+
+- name: Disable SELinux
+  become: true
+  ansible.builtin.replace:
+    path: "/etc/selinux/config"
+    regexp: SELINUX=enforcing
+    replace: SELINUX=disabled
+  notify:
+    - Setenforce
+  when: not sestate.changed
+  tags:
+    - pretasks
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+  tags:
+    - pretasks
+
 - name: Stop Firewalld
   become: true
   ansible.builtin.systemd:
@@ -8,6 +35,10 @@
     state: stopped
   tags:
     - pretasks
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
 
 - name: Edit /etc/profile
   become: true
