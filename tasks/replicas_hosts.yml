@@ -8,10 +8,12 @@
   notify:
     - Restart mongod
   tags:
+    - mongo
     - replicas
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
   tags:
+    - mongo
     - replicas
 ...

@@ -8,5 +8,6 @@
     group: mongod
     mode: '0400'
   tags:
+    - mongo
     - ssl
 ...

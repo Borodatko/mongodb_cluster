@@ -7,6 +7,7 @@
     masked: false
     state: started
   tags:
+    - mongo
     - primary_replica
 
 - name: Create admin user
@@ -17,12 +18,14 @@
     state: present
     roles: "{{ mongodb_role }}"
   tags:
+    - mongo
     - primary_replica
 
 - name: Generate private key
   become: true
   ansible.builtin.shell: 'openssl rand -base64 756 > /var/lib/mongo/mongo-keyfile'
   tags:
+    - mongo
     - primary_replica
 
 - name: Set permissions
@@ -33,6 +36,7 @@
     owner: mongod
     group: mongod
   tags:
+    - mongo
     - primary_replica
 
 #  community.crypto.openssl_privatekey:
@@ -48,5 +52,6 @@
     dest: /tmp/mongo-keyfile
     flat: true
   tags:
+    - mongo
     - primary_replica
 ...

@@ -6,6 +6,7 @@
     dest: /etc/configReplSet.js
     mode: '0644'
   tags:
+    - mongo
     - replication
 
 - name: Create replica configReplSet
@@ -18,5 +19,6 @@
     file: /etc/configReplSet.js
     idempotent: true
   tags:
+    - mongo
     - replication
 ...

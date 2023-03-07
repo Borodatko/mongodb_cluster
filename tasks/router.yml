@@ -7,6 +7,7 @@
     masked: true
     state: stopped
   tags:
+    - mongo
     - router
 
 - name: Copy mongodb config
@@ -16,6 +17,7 @@
     dest: /etc/mongos.conf
     mode: '0644'
   tags:
+    - mongo
     - router
 
 - name: Copy systemd unit
@@ -27,11 +29,13 @@
   notify:
     - Start mongos
   tags:
+    - mongo
     - router
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
   tags:
+    - mongo
     - router
 
 - name: Copy js script
@@ -41,6 +45,7 @@
     dest: /etc/addShard.js
     mode: '0644'
   tags:
+    - mongo
     - router
 
 - name: Add shards
@@ -53,5 +58,6 @@
     file: "/etc/addShard.js"
     idempotent: true
   tags:
+    - mongo
     - router
 ...

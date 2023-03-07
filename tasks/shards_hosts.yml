@@ -8,10 +8,12 @@
   notify:
     - Restart mongod
   tags:
+    - mongo
     - shards_hosts
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
   tags:
+    - mongo
     - shards_hosts
 ...

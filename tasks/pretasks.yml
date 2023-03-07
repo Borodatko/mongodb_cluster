@@ -7,6 +7,7 @@
   check_mode: true
   register: sestate
   tags:
+    - mongo
     - pretasks
 
 - name: Disable SELinux
@@ -19,11 +20,13 @@
     - Setenforce
   when: not sestate.changed
   tags:
+    - mongo
     - pretasks
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
   tags:
+    - mongo
     - pretasks
 
 - name: Stop Firewalld
@@ -34,6 +37,7 @@
     masked: true
     state: stopped
   tags:
+    - mongo
     - pretasks
 
 - name: Edit /etc/profile
@@ -47,6 +51,7 @@
       PROMPT_COMMAND='history -a'
       export HISTIGNORE="ls:ll:history:w:htop:pwd"
   tags:
+    - mongo
     - pretasks
 
 - name: Add Mongo Repo
@@ -56,6 +61,7 @@
     dest: /etc/yum.repos.d/mongodb.repo
     mode: '0644'
   tags:
+    - mongo
     - pretasks
 
 - name: Upgrade all packages
@@ -64,6 +70,7 @@
     name: '*'
     state: latest
   tags:
+    - mongo
     - pretasks
 
 - name: Install Packages
@@ -81,6 +88,7 @@
       - mongodb-org
     state: present
   tags:
+    - mongo
     - pretasks
 
 - name: Rename Hosts
@@ -88,6 +96,7 @@
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
   tags:
+    - mongo
     - pretasks
 
 - name: Copy hosts file
@@ -97,6 +106,7 @@
     dest: /etc/hosts
     mode: '0644'
   tags:
+    - mongo
     - pretasks
 
 - name: Upgrade pip
@@ -107,6 +117,7 @@
     executable: pip3
     state: latest
   tags:
+    - mongo
     - pretasks
 
 - name: Install libs
@@ -119,5 +130,6 @@
     executable: pip3
     state: present
   tags:
+    - mongo
     - pretasks
 ...

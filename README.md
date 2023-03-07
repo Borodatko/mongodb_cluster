@@ -37,6 +37,7 @@ Tags
 Supported tags in tasks:
 
  - **pretasks**
+ - **mongo**
  - **primary_replica**
  - **ssl**
  - **replicas**

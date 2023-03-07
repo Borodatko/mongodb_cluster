@@ -6,6 +6,7 @@
     dest: /etc/rs0.js
     mode: '0644'
   tags:
+    - mongo
     - shards
 
 - name: Create replica rs0
@@ -18,5 +19,6 @@
     file: "/etc/rs0.js"
     idempotent: true
   tags:
+    - mongo
     - shards
 ...
