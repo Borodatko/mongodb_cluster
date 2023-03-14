@@ -50,7 +50,7 @@
 
 - name: Add shards
   community.mongodb.mongodb_shell:
-    login_host: "{{ ip07 }}"
+    login_host: "{{ host07 }}"
     login_port: 27017
     login_user: "{{ mongodb_user }}"
     login_password: "{{ mongodb_pass }}"

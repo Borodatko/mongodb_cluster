@@ -15,7 +15,7 @@
 
 - name: Create replica configReplSet
   community.mongodb.mongodb_shell:
-    login_host: "{{ ip01 }}"
+    login_host: "{{ host01 }}"
     login_port: 27019
     login_user: "{{ mongodb_user }}"
     login_password: "{{ mongodb_pass }}"
