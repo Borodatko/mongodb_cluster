@@ -1,4 +1,5 @@
 - name: Device partitioning
+  become: true
   parted:
     device: '{{ blockDevice }}'
     number: 1
@@ -8,6 +9,7 @@
     - xfs
 
 - name: Create XFS FS
+  become: true
   community.general.filesystem:
     fstype: xfs
     dev: '{{ partedDevice }}'
@@ -16,17 +18,17 @@
     - xfs
 
 - name: Create Directory
+  become: true
   ansible.builtin.file:
     path: '{{ mongoDir }}'
     state: directory
     mode: '0755'
-    owner: mongod
-    group: mongod
   tags:
     - mongo
     - xfs
 
 - name: Update fstab
+  become: true
   ansible.builtin.lineinfile:
     dest: /etc/fstab
     line: '{{ partedDevice }}  {{ mongoDir }}  xfs  defaults  0  0'
@@ -35,11 +37,22 @@
     - xfs
 
 - name: Monut XFS device
+  become: true
   ansible.posix.mount:
     path: '{{ mongoDir }}'
     src: '{{ partedDevice }}'
     fstype: xfs
     state: mounted
+  tags:
+    - mongo
+    - xfs
+
+- name: Change Permissions
+  become: true
+  ansible.builtin.file:
+    path: '{{ mongoDir }}'
+    owner: mongod
+    group: mongod
   tags:
     - mongo
     - xfs
