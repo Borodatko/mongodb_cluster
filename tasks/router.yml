@@ -48,6 +48,10 @@
     - mongo
     - router
 
+- name: Wait 10 seconds
+  ansible.builtin.wait_for:
+    timeout: 10
+
 - name: Add shards
   community.mongodb.mongodb_shell:
     login_host: "{{ host07 }}"
