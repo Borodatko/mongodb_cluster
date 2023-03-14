@@ -1,4 +1,8 @@
 ---
+- name: Wait 10 seconds
+  ansible.builtin.wait_for:
+    timeout: 10
+
 - name: Copy js script
   become: true
   ansible.builtin.template:

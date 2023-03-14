@@ -12,16 +12,15 @@ net:
   bindIp: 0.0.0.0
 
 replication:
-     replSetName: rs0
+  replSetName: rs0
 
 sharding:
-   clusterRole: shardsvr
+  clusterRole: shardsvr
 
 security:
-   keyFile: /var/lib/mongo/mongo-keyfile
+  keyFile: /var/lib/mongo/mongo-keyfile
 
 storage:
-  dbPath: /var/lib/mongo
+  dbPath: /mongo
   journal:
     enabled: true
-

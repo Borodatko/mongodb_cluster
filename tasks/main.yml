@@ -10,6 +10,10 @@
   ansible.builtin.include_tasks: pretasks.yml
   tags: [always]
 
+- name: XFS fs provisioning
+  ansible.builtin.include_tasks: xfs.yml
+  tags: [always]
+
 - name: Configure Primary Replica
   ansible.builtin.include_tasks: primary_replica.yml
   when:

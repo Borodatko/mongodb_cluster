@@ -5,10 +5,10 @@ systemLog:
 
 net:
   port: 27017
-  bindIp: {{ ip07 }}
+  bindIp: {{ host07 }}
 
 security:
   keyFile: /var/lib/mongo/mongo-keyfile
 
 sharding:
-  configDB: configReplSet/{{ ip01 }}:27019,{{ ip02 }}:27019,{{ ip03 }}:27019
+  configDB: configReplSet/{{ host01 }}:27019,{{ host02 }}:27019,{{ host03 }}:27019

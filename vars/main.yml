@@ -1,4 +1,7 @@
 ---
+blockDevice: "/dev/sdb"
+partedDevice: "/dev/sdb1"
+mongoDir: "/mongo"
 mongo_version: "5.0"
 mongo_database: "CHANGEME"
 mongodb_user: "CHANGEME"

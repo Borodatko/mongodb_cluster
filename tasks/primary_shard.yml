@@ -1,4 +1,14 @@
 ---
+- name: Replace storage path
+  become: true
+  ansible.builtin.replace:
+    path: /etc/mongod.conf
+    regexp: "dbPath: /var/lib/mongo"
+    replace: "dbPath: /mongo"
+  tags:
+    - mongo
+    - primary_shard
+
 - name: Start mongod
   become: true
   ansible.builtin.systemd:
