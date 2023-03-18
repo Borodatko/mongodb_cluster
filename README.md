@@ -20,7 +20,7 @@ Requirements
 WARNING
 -------
 
-Parted module is used in role, which has unmaintained Ansible documentation.
+Parted module used in role, which has unmaintained Ansible documentation.
 
 https://docs.ansible.com/archive/ansible/2.3/parted_module.html
 
