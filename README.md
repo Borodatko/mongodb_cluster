@@ -38,13 +38,20 @@ Variables
 | mongodb_user   | database username               | CHANGEME      |
 | mongodb_pass   | databasepassword                | CHANGEME      |
 | mongodb_role   | database role                   | CHANGEME      |
-| host01         | primary config replica hostname | CHANGEME      |
-| host02         | config replica node hostname    | CHANGEME      |
-| host03         | config replica node hostname    | CHANGEME      |
-| host04         | primary shard hostname          | CHANGEME      |
-| host05         | shard node hostname             | CHANGEME      |
-| host06         | shard node hostname             | CHANGEME      |
-| host07         | mongos router hostname          | CHANGEME      |
+| host01         | primary config replica hostname | mongo01       |
+| host02         | config replica node hostname    | mongo02       |
+| host03         | config replica node hostname    | mongo03       |
+| host04         | primary shard hostname          | mongo04       |
+| host05         | shard node hostname             | mongo05       |
+| host06         | shard node hostname             | mongo06       |
+| host07         | mongos router hostname          | mongo07       |
+| ip01           | primary config replica ip addr  | CHANGEME      |
+| ip02           | config replica node ip addr     | CHANGEME      |
+| ip03           | config replica node ip addr     | CHANGEME      |
+| ip04           | primary shard ip addr           | CHANGEME      |
+| ip05           | shard node ip addr              | CHANGEME      |
+| ip06           | shard node ip addr              | CHANGEME      |
+| ip07           | mongos router ip addr           | CHANGEME      |
 
 
 Tags
