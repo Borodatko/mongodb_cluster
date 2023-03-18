@@ -56,4 +56,13 @@
   tags:
     - mongo
     - xfs
+
+- name: Change transparent hugepage
+  become: true
+  ansible.builtin.copy:
+    content: 'enabled'
+    dest: /sys/kernel/mm/transparent_hugepage/enabled
+  tags:
+    - mongo
+    - xfs
 ...
