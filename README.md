@@ -14,7 +14,8 @@ Requirements
 ------------
 
  - RHEL7-based OS;
- - python3.6 or higher.
+ - python3.6 or higher;
+ - single block device, it will be layout with xfs
 
 
 WARNING
