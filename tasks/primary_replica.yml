@@ -31,9 +31,19 @@
     - mongo
     - primary_replica
 
+- name: Check if key exists
+  become: true
+  ansible.builtin.stat:
+    path: /var/lib/mongo/mongo-keyfile
+  register: myKey
+  tags:
+    - mongo
+    - primary_replica
+
 - name: Generate private key
   become: true
   ansible.builtin.shell: 'openssl rand -base64 756 > /var/lib/mongo/mongo-keyfile'
+  when: not myKey.stat.exists
   tags:
     - mongo
     - primary_replica
